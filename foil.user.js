@@ -32,9 +32,17 @@ function addJQuery( callback, jqVersion ) {
   target.appendChild( scriptNode );
 }
 
-function main($) {
-  $(function(){
+/**
+ * Main entry point
+ * @param $ A reference to jQuery
+ */
+function main( $ ) {
+  $( function() {
 
+    /**
+     * The mapping between base- and foil tags.
+     * @type {Object}
+     */
     var tagMap = {
       "ubuntu-12.10"  : "ubuntu",
       "ubuntu-12.04"  : "ubuntu",
@@ -58,9 +66,10 @@ function main($) {
       "windows-7"  : "windows",
       "windows-xp" : "windows",
 
-      "safari"        : "browser",
-      "firefox"       : "browser",
-      "google-chrome" : "browser"
+      "safari"            : "browser",
+      "firefox"           : "browser",
+      "internet-explorer" : "browser",
+      "google-chrome"     : "browser"
     };
 
     var reverseMap = [];
@@ -98,6 +107,7 @@ function main($) {
         }
       }
 
+      // Just some logging
       if( newTags.length > 0 ) {
         console.log( "PRE : " + existingTags );
         console.log( "ADD : " + newTags );
@@ -140,7 +150,7 @@ function main($) {
 
     $( document ).on( "click", ".new-post-activity", function() {
       console.log( "Clicked!" );
-      setTimeout(expandAllTags,1000);
+      setTimeout( expandAllTags, 1000 );
     } );
 
     console.log( "Foiling ended." );
@@ -148,4 +158,4 @@ function main($) {
 }
 
 // load jQuery and execute the main function
-addJQuery(main);
+addJQuery( main );
