@@ -11,8 +11,7 @@
 //
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 //
-// @version        0.1.7
-// @history        0.1 Initial release
+// @version        0.2
 //
 // ==/UserScript==
 
@@ -75,6 +74,18 @@ function main( $ ) {
     var reverseMap = [];
 
     /**
+     * The favorite tags of the user.
+     * @type {Array}
+     */
+    var interestingTags = [];
+
+    /**
+     * The ignored tags of the user.
+     * @type {Array}
+     */
+    var ignoredTags = [];
+
+    /**
      * Expands the tags on a given question.
      * @param question The question that should have its tags expanded.
      */
@@ -125,6 +136,16 @@ function main( $ ) {
           }
         );
         $( "a[rel='tag']", question ).last().after( foilTag );
+
+        // If our foil tag is a favorite or ignored tag,
+        // apply the corresponding class to the question.
+        if( $.inArray( tag, interestingTags ) > -1 ) {
+          $( question ).addClass( "tagged-interesting" );
+        }
+        if( $.inArray( tag, ignoredTags ) > -1 ) {
+          $( question ).addClass( "tagged-ignored" );
+        }
+
       } );
 
       // Recurse until no new tags are added
@@ -144,12 +165,20 @@ function main( $ ) {
 
     console.log( "Foiling started.");
 
+    // Retrieve the users favorite and ignored tags.
+    interestingTags = $( "#interestingTags a" ).map( function( index, tag ) {
+      return this.text;
+    } ).get();
+    ignoredTags = $( "#ignoredTags a" ).map( function( index, tag ) {
+      return this.text;
+    } ).get();
+
+    // Expand the tags on all visible questions.
     expandAllTags();
 
     console.log( "Preparing foil for future guests..." );
 
     $( document ).on( "click", ".new-post-activity", function() {
-      console.log( "Clicked!" );
       setTimeout( expandAllTags, 1000 );
     } );
 
