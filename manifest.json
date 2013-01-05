@@ -1,17 +1,19 @@
 {
-  "name": "Foil",
-  "version": "0.1.3",
-  "manifest_version": 2,
-  "description": "Does weird stuff on StackExchange sites",
-  "content_scripts": [ {
-      "exclude_globs": [  ],
-      "exclude_matches": [  ],
-      "include_globs": [ "http://superuser.com/*" ],
-      "js": [ "foil.user.js" ],
-      "matches": [ "http://*/*", "https://*/*" ],
-      "run_at": "document_idle"
-   } ],
-  "permissions": [
+  "name"            :"Foil",
+  "version"         :"0.1.5",
+  "manifest_version":2,
+  "description"     :"Does weird stuff on StackExchange sites",
+  "content_scripts" :[
+    {
+      "exclude_globs"  :[],
+      "exclude_matches":[],
+      "include_globs"  :["http://superuser.com/*"],
+      "js"             :["foil.user.js"],
+      "matches"        :["http://*/*", "https://*/*"],
+      "run_at"         :"document_idle"
+    }
+  ],
+  "permissions"     :[
     "http://superuser.com/"
   ]
 

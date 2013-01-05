@@ -11,14 +11,12 @@
 //
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 //
-// @version        0.1.3
+// @version        0.1.5
 // @history        0.1 Initial release
 //
 // ==/UserScript==
 
 // jQuery loading from http://erikvold.com/blog/index.cfm/2010/6/14/using-jquery-with-a-user-script
-
-// a function that loads jQuery and calls a callback function when jQuery has finished loading
 function addJQuery( callback, jqVersion ) {
   jqVersion       = jqVersion || "1.8.3";
   var D           = document;
@@ -37,37 +35,76 @@ function addJQuery( callback, jqVersion ) {
 function main($) {
   $(function(){
 
+    var tagMap = {
+      "ubuntu" : "linux",
+
+      "windows-xp" : "windows",
+      "windows-7"  : "windows",
+      "windows-8"  : "windows",
+
+      "safari"        : "browser",
+      "firefox"       : "browser",
+      "google-chrome" : "browser"
+    };
+
+    var reverseMap = [];
+
+    /**
+     * Expands the tags on a given question.
+     * @param question The question that should have its tags expanded.
+     */
     function expandTags( question ) {
       // Get existing tags from question
       var existingTags = $( "a[rel='tag']", question ).map( function( index, tag ) {
         return this.text;
       } ).get();
 
-      console.log( "PRE : " + existingTags );
-
       // Add new tags as required
-      var newTags = new Array();
-      if( $.inArray( "ubuntu", existingTags ) > -1 && $.inArray( "linux", existingTags ) == -1 ) {
-        newTags.push( "linux" );
-      }
-      if( $.inArray( "windows-7", existingTags ) > -1 && $.inArray( "windows", existingTags ) == -1 ) {
-        newTags.push( "windows" );
+      var newTags = [];
+      for( var tagCandidate in tagMap ) {
+        if( $.inArray( tagCandidate, existingTags ) > -1 &&
+            $.inArray( tagMap[ tagCandidate ], existingTags ) == -1 &&
+            $.inArray( tagMap[ tagCandidate ], newTags ) == -1 ) {
+          newTags.push( tagMap[ tagCandidate ] );
+
+          // Check if we have to build the reverse map for this tag.
+          // The reverse map will allow us to easily determine which tags "make up" a given foil tag.
+          var seed = tagMap[ tagCandidate ];
+          if( !reverseMap.hasOwnProperty( seed ) ) {
+            // No reverse map calculated yet, build it.
+            reverseMap[ seed ] = [];
+            for( var tag in tagMap ) {
+              if( tagMap[ tag ] == seed ) {
+                reverseMap[ seed ].push( tag );
+              }
+            }
+          }
+        }
       }
 
-      console.log( "ADD : " + newTags );
+      if( newTags.length > 0 ) {
+        console.log( "PRE : " + existingTags );
+        console.log( "ADD : " + newTags );
+      }
 
       $( newTags ).each( function( index, tag ) {
-        var uberTag = $("<a>" ).html( tag ).attr(
+        var sourceTags = reverseMap[ tag ].join( " or " );
+        var foilTag = $("<a>" ).html( tag ).attr(
           {
             "class" : "post-tag",
+            "href"  : "/questions/tagged/" + sourceTags,
             "rel"   : "tag",
-            "style" : "color:#666"
+            "style" : "color:#666",
+            "title" : "Show all questions tagged " + sourceTags
           }
         );
-        $( "a[rel='tag']", question ).last().after( uberTag );
+        $( "a[rel='tag']", question ).last().after( foilTag );
       } );
     }
 
+    /**
+     * Expands tags on all currently loaded questions.
+     */
     function expandAllTags() {
       $( ".question-summary" ).each( function( index, question ) {
         expandTags( question );
