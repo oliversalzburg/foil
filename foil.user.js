@@ -11,7 +11,7 @@
 //
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 //
-// @version        0.1.5
+// @version        0.1.7
 // @history        0.1 Initial release
 //
 // ==/UserScript==
@@ -36,11 +36,27 @@ function main($) {
   $(function(){
 
     var tagMap = {
+      "ubuntu-12.10"  : "ubuntu",
+      "ubuntu-12.04"  : "ubuntu",
+      "ubuntu-11.10"  : "ubuntu",
+      "ubuntu-11.04"  : "ubuntu",
+      "ubuntu-10.10"  : "ubuntu",
+      "ubuntu-10.04"  : "ubuntu",
+      "ubuntu-9.10"   : "ubuntu",
+      "ubuntu-9.04"   : "ubuntu",
+      "ubuntu-8.10"   : "ubuntu",
+      "ubuntu-8.04"   : "ubuntu",
+      "kubuntu"       : "ubuntu",
+      "lubuntu"       : "ubuntu",
+      "xubuntu"       : "ubuntu",
+      "ubuntu-server" : "ubuntu",
+      "ubuntu-unity"  : "ubuntu",
+
       "ubuntu" : "linux",
 
-      "windows-xp" : "windows",
-      "windows-7"  : "windows",
       "windows-8"  : "windows",
+      "windows-7"  : "windows",
+      "windows-xp" : "windows",
 
       "safari"        : "browser",
       "firefox"       : "browser",
@@ -100,6 +116,11 @@ function main($) {
         );
         $( "a[rel='tag']", question ).last().after( foilTag );
       } );
+
+      // Recurse until no new tags are added
+      if( newTags.length > 0 ) {
+        expandTags( question );
+      }
     }
 
     /**
