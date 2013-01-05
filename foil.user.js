@@ -11,7 +11,7 @@
 //
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 //
-// @version        0.2
+// @version        0.2.1
 //
 // ==/UserScript==
 
@@ -59,19 +59,37 @@ function main( $ ) {
       "ubuntu-server" : "ubuntu",
       "ubuntu-unity"  : "ubuntu",
 
+      "centos" : "linux",
+      "debian" : "linux",
+      "rhel"   : "linux",
       "ubuntu" : "linux",
 
-      "windows-8"  : "windows",
-      "windows-7"  : "windows",
-      "windows-xp" : "windows",
+      "windows-8"     : "windows",
+      "windows-7"     : "windows",
+      "windows-vista" : "windows",
+      "windows-xp"    : "windows",
+
+      "osx-snow-leopard" : "osx",
 
       "safari"            : "browser",
       "firefox"           : "browser",
       "internet-explorer" : "browser",
-      "google-chrome"     : "browser"
+      "google-chrome"     : "browser",
+
+      "wireless-networking" : "networking",
+
+      "microsoft-excel"      : "microsoft-office",
+      "microsoft-onenote"    : "microsoft-office",
+      "microsoft-outlook"    : "microsoft-office",
+      "microsoft-powerpoint" : "microsoft-office",
+      "microsoft-word"       : "microsoft-office",
+
+      "microsoft-word-2003" : "microsoft-word",
+      "microsoft-word-2008" : "microsoft-word",
+      "microsoft-word-2010" : "microsoft-word"
     };
 
-    var reverseMap = [];
+    var reverseTagMap = [];
 
     /**
      * The favorite tags of the user.
@@ -86,10 +104,40 @@ function main( $ ) {
     var ignoredTags = [];
 
     /**
+     * Builds a reverse map for a tag.
+     *
+     * Assuming we want to build the reverse map for "windows", this would iterate over the whole tag map
+     * and check which tags contain "windows" as the foil tag. Then it would build a list of all the matching tags.
+     * @param seed The tag for which to build the reverse map.
+     * @return {*}
+     */
+    function reverseTag( seed ) {
+      if( reverseTagMap.hasOwnProperty( seed ) ) return reverseTagMap[ seed ];
+
+      // No reverse map calculated yet, build it.
+      reverseTagMap[ seed ] = [];
+      expandTagMap( seed, seed );
+    }
+
+    /**
+     * Recursively expands all foil tags to their underlying tags.
+     * @param seed The foil tag in the reverse tag map that should be expanded.
+     * @param search The tag to currently search for. Usually, you'll want to pass the same value as for seed.
+     */
+    function expandTagMap( seed, search ) {
+      for( var tag in tagMap ) {
+        if( tagMap[ tag ] == search ) {
+          reverseTagMap[ seed ].push( tag );
+          expandTagMap( seed, tag );
+        }
+      }
+    }
+
+    /**
      * Expands the tags on a given question.
      * @param question The question that should have its tags expanded.
      */
-    function expandTags( question ) {
+    function applyFoil( question ) {
       // Get existing tags from question
       var existingTags = $( "a[rel='tag']", question ).map( function( index, tag ) {
         return this.text;
@@ -98,40 +146,33 @@ function main( $ ) {
       // Add new tags as required
       var newTags = [];
       for( var tagCandidate in tagMap ) {
+        // The foil tag that we possibly want to add to this question.
+        var foilCandidate = tagMap[ tagCandidate ];
+
+        // Is the tag candidate a tag on this question?
         if( $.inArray( tagCandidate, existingTags ) > -1 &&
-            $.inArray( tagMap[ tagCandidate ], existingTags ) == -1 &&
-            $.inArray( tagMap[ tagCandidate ], newTags ) == -1 ) {
-          newTags.push( tagMap[ tagCandidate ] );
+            // ...and does the foil candidate not yet exist on the question?
+            $.inArray( foilCandidate, existingTags ) == -1 &&
+            // ...and is the foil candidate not already on the list of foil tags to be added?
+            $.inArray( foilCandidate, newTags ) == -1 ) {
+
+          // OK. Add this foil tag!
+          newTags.push( foilCandidate );
 
           // Check if we have to build the reverse map for this tag.
           // The reverse map will allow us to easily determine which tags "make up" a given foil tag.
-          var seed = tagMap[ tagCandidate ];
-          if( !reverseMap.hasOwnProperty( seed ) ) {
-            // No reverse map calculated yet, build it.
-            reverseMap[ seed ] = [];
-            for( var tag in tagMap ) {
-              if( tagMap[ tag ] == seed ) {
-                reverseMap[ seed ].push( tag );
-              }
-            }
-          }
+          reverseTag( foilCandidate );
         }
       }
 
-      // Just some logging
-      if( newTags.length > 0 ) {
-        console.log( "PRE : " + existingTags );
-        console.log( "ADD : " + newTags );
-      }
-
       $( newTags ).each( function( index, tag ) {
-        var sourceTags = reverseMap[ tag ].join( " or " );
+        var sourceTags = reverseTagMap[ tag ].join( " or " );
         var foilTag = $("<a>" ).html( tag ).attr(
           {
             "class" : "post-tag",
             "href"  : "/questions/tagged/" + sourceTags,
             "rel"   : "tag",
-            "style" : "color:#666",
+            "style" : "opacity:0.6",
             "title" : "Show all questions tagged " + sourceTags
           }
         );
@@ -150,16 +191,16 @@ function main( $ ) {
 
       // Recurse until no new tags are added
       if( newTags.length > 0 ) {
-        expandTags( question );
+        applyFoil( question );
       }
     }
 
     /**
      * Expands tags on all currently loaded questions.
      */
-    function expandAllTags() {
+    function applyFoilToAll() {
       $( ".question-summary" ).each( function( index, question ) {
-        expandTags( question );
+        applyFoil( question );
       } );
     }
 
@@ -174,12 +215,12 @@ function main( $ ) {
     } ).get();
 
     // Expand the tags on all visible questions.
-    expandAllTags();
+    applyFoilToAll();
 
     console.log( "Preparing foil for future guests..." );
 
     $( document ).on( "click", ".new-post-activity", function() {
-      setTimeout( expandAllTags, 1000 );
+      setTimeout( applyFoilToAll, 1000 );
     } );
 
     console.log( "Foiling ended." );
