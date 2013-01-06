@@ -84,7 +84,31 @@ function main( $ ) {
       "microsoft-powerpoint" : "microsoft-office",
       "microsoft-word"       : "microsoft-office",
 
+      "microsoft-excel-2002" : "microsoft-excel",
+      "microsoft-excel-2003" : "microsoft-excel",
+      "microsoft-excel-2007" : "microsoft-excel",
+      "microsoft-excel-2008" : "microsoft-excel",
+      "microsoft-excel-2010" : "microsoft-excel",
+      "microsoft-excel-2011" : "microsoft-excel",
+      "microsoft-excel-2013" : "microsoft-excel",
+
+      "microsoft-onenote-2007" : "microsoft-onenote",
+      "microsoft-onenote-2010" : "microsoft-onenote",
+
+      "microsoft-outlook-2002" : "microsoft-outlook",
+      "microsoft-outlook-2003" : "microsoft-outlook",
+      "microsoft-outlook-2007" : "microsoft-outlook",
+      "microsoft-outlook-2010" : "microsoft-outlook",
+      "microsoft-outlook-2011" : "microsoft-outlook",
+      "microsoft-outlook-2013" : "microsoft-outlook",
+
+      "microsoft-powerpoint-2003" : "microsoft-powerpoint",
+      "microsoft-powerpoint-2007" : "microsoft-powerpoint",
+      "microsoft-powerpoint-2010" : "microsoft-powerpoint",
+      "microsoft-powerpoint-2011" : "microsoft-powerpoint",
+
       "microsoft-word-2003" : "microsoft-word",
+      "microsoft-word-2007" : "microsoft-word",
       "microsoft-word-2008" : "microsoft-word",
       "microsoft-word-2010" : "microsoft-word"
     };
