@@ -58,7 +58,7 @@ function main( $ ) {
       foil[ foilTarget ] = null;
       $.getJSON("http://query.yahooapis.com/v1/public/yql",
         {
-          q:      "select * from json where url=\"https://raw.github.com/oliversalzburg/foil/master/foil/superuser.json" + foilTarget + ".json\"",
+          q:      "select * from json where url=\"https://raw.github.com/oliversalzburg/foil/master/foil/" + foilTarget + ".json\"",
           /*callback: gotJSON, // you don't even need this line if your browser supports CORS*/
           format: "json"
         },
