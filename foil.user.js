@@ -158,7 +158,7 @@ function main( $ ) {
         var foilTag = $("<a>" ).html( tag ).attr(
           {
             "class" : "post-tag",
-            "href"  : "/questions/tagged/" + sourceTags,
+            "href"  : "/questions/tagged/" + encodeURIComponent( sourceTags ),
             "rel"   : "tag",
             "style" : "opacity:0.6",
             "title" : "Show all questions tagged " + sourceTags
