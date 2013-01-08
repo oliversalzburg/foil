@@ -1,0 +1,70 @@
+{
+  "ubuntu-12.10"  : "ubuntu",
+  "ubuntu-12.04"  : "ubuntu",
+  "ubuntu-11.10"  : "ubuntu",
+  "ubuntu-11.04"  : "ubuntu",
+  "ubuntu-10.10"  : "ubuntu",
+  "ubuntu-10.04"  : "ubuntu",
+  "ubuntu-9.10"   : "ubuntu",
+  "ubuntu-9.04"   : "ubuntu",
+  "ubuntu-8.10"   : "ubuntu",
+  "ubuntu-8.04"   : "ubuntu",
+  "kubuntu"       : "ubuntu",
+  "lubuntu"       : "ubuntu",
+  "xubuntu"       : "ubuntu",
+  "ubuntu-server" : "ubuntu",
+  "ubuntu-unity"  : "ubuntu",
+
+  "centos" : "linux",
+  "debian" : "linux",
+  "rhel"   : "linux",
+  "ubuntu" : "linux",
+
+  "windows-8"     : "windows",
+  "windows-7"     : "windows",
+  "windows-vista" : "windows",
+  "windows-xp"    : "windows",
+
+  "osx-snow-leopard" : "osx",
+
+  "safari"            : "browser",
+  "firefox"           : "browser",
+  "internet-explorer" : "browser",
+  "google-chrome"     : "browser",
+
+  "wireless-networking" : "networking",
+
+  "microsoft-excel"      : "microsoft-office",
+  "microsoft-onenote"    : "microsoft-office",
+  "microsoft-outlook"    : "microsoft-office",
+  "microsoft-powerpoint" : "microsoft-office",
+  "microsoft-word"       : "microsoft-office",
+
+  "microsoft-excel-2002" : "microsoft-excel",
+  "microsoft-excel-2003" : "microsoft-excel",
+  "microsoft-excel-2007" : "microsoft-excel",
+  "microsoft-excel-2008" : "microsoft-excel",
+  "microsoft-excel-2010" : "microsoft-excel",
+  "microsoft-excel-2011" : "microsoft-excel",
+  "microsoft-excel-2013" : "microsoft-excel",
+
+  "microsoft-onenote-2007" : "microsoft-onenote",
+  "microsoft-onenote-2010" : "microsoft-onenote",
+
+  "microsoft-outlook-2002" : "microsoft-outlook",
+  "microsoft-outlook-2003" : "microsoft-outlook",
+  "microsoft-outlook-2007" : "microsoft-outlook",
+  "microsoft-outlook-2010" : "microsoft-outlook",
+  "microsoft-outlook-2011" : "microsoft-outlook",
+  "microsoft-outlook-2013" : "microsoft-outlook",
+
+  "microsoft-powerpoint-2003" : "microsoft-powerpoint",
+  "microsoft-powerpoint-2007" : "microsoft-powerpoint",
+  "microsoft-powerpoint-2010" : "microsoft-powerpoint",
+  "microsoft-powerpoint-2011" : "microsoft-powerpoint",
+
+  "microsoft-word-2003" : "microsoft-word",
+  "microsoft-word-2007" : "microsoft-word",
+  "microsoft-word-2008" : "microsoft-word",
+  "microsoft-word-2010" : "microsoft-word"
+}

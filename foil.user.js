@@ -8,10 +8,12 @@
 // @license        MIT License (http://opensource.org/licenses/mit-license.php)
 //
 // @include        http://superuser.com/*
+// @include        http://stackoverflow.com/*
+// @include        http://serverfault.com/*
 //
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 //
-// @version        0.2.3
+// @version        0.3
 //
 // ==/UserScript==
 
@@ -38,81 +40,42 @@ function addJQuery( callback, jqVersion ) {
 function main( $ ) {
   $( function() {
 
+    // Get the first token of the hostname as our current site.
+    // For philosophy.stackexchange.com, that results in philosophy.
+    // For superuser.com, it results in superuser
+    var foilTarget = document.location.hostname.split( '.' )[ 0 ].toLowerCase();
+    // ...for meta.something.foo, we adjust a little
+    if( "meta" == foilTarget ) foilTarget = document.location.hostname.split( '.' )[ 1 ].toLowerCase();
+
+
     /**
-     * The mapping between base- and foil tags.
-     * @type {Object}
+     * Our container to store foiling sets (even though it'll usually just contain one set).
      */
-    var tagMap = {
-      "ubuntu-12.10"  : "ubuntu",
-      "ubuntu-12.04"  : "ubuntu",
-      "ubuntu-11.10"  : "ubuntu",
-      "ubuntu-11.04"  : "ubuntu",
-      "ubuntu-10.10"  : "ubuntu",
-      "ubuntu-10.04"  : "ubuntu",
-      "ubuntu-9.10"   : "ubuntu",
-      "ubuntu-9.04"   : "ubuntu",
-      "ubuntu-8.10"   : "ubuntu",
-      "ubuntu-8.04"   : "ubuntu",
-      "kubuntu"       : "ubuntu",
-      "lubuntu"       : "ubuntu",
-      "xubuntu"       : "ubuntu",
-      "ubuntu-server" : "ubuntu",
-      "ubuntu-unity"  : "ubuntu",
+    var foil = [];
 
-      "centos" : "linux",
-      "debian" : "linux",
-      "rhel"   : "linux",
-      "ubuntu" : "linux",
+    // Try to load the foil set for our current target
+    if( undefined === foil[ foilTarget ] ) {
+      foil[ foilTarget ] = null;
+      $.getJSON("http://query.yahooapis.com/v1/public/yql",
+        {
+          q:      "select * from json where url=\"http://cloud.hartwig-at.de/~oliver/" + foilTarget + ".json\"",
+          /*callback: gotJSON, // you don't even need this line if your browser supports CORS*/
+          format: "json"
+        },
+        function( data ){
+          if( data.query.results ) {
+            tagMap = foil[ foilTarget ]= data.query.results.json;
+            console.log( "FOIL: Received foil set '" + foilTarget + "' for current site." );
 
-      "windows-8"     : "windows",
-      "windows-7"     : "windows",
-      "windows-vista" : "windows",
-      "windows-xp"    : "windows",
+          } else {
+            console.error( "FOIL: Failed to receive foil set '" + foilTarget + "'!" );
+            loaderDelay = Number.MAX_VALUE;
+          }
+        }
+      );
+    }
 
-      "osx-snow-leopard" : "osx",
-
-      "safari"            : "browser",
-      "firefox"           : "browser",
-      "internet-explorer" : "browser",
-      "google-chrome"     : "browser",
-
-      "wireless-networking" : "networking",
-
-      "microsoft-excel"      : "microsoft-office",
-      "microsoft-onenote"    : "microsoft-office",
-      "microsoft-outlook"    : "microsoft-office",
-      "microsoft-powerpoint" : "microsoft-office",
-      "microsoft-word"       : "microsoft-office",
-
-      "microsoft-excel-2002" : "microsoft-excel",
-      "microsoft-excel-2003" : "microsoft-excel",
-      "microsoft-excel-2007" : "microsoft-excel",
-      "microsoft-excel-2008" : "microsoft-excel",
-      "microsoft-excel-2010" : "microsoft-excel",
-      "microsoft-excel-2011" : "microsoft-excel",
-      "microsoft-excel-2013" : "microsoft-excel",
-
-      "microsoft-onenote-2007" : "microsoft-onenote",
-      "microsoft-onenote-2010" : "microsoft-onenote",
-
-      "microsoft-outlook-2002" : "microsoft-outlook",
-      "microsoft-outlook-2003" : "microsoft-outlook",
-      "microsoft-outlook-2007" : "microsoft-outlook",
-      "microsoft-outlook-2010" : "microsoft-outlook",
-      "microsoft-outlook-2011" : "microsoft-outlook",
-      "microsoft-outlook-2013" : "microsoft-outlook",
-
-      "microsoft-powerpoint-2003" : "microsoft-powerpoint",
-      "microsoft-powerpoint-2007" : "microsoft-powerpoint",
-      "microsoft-powerpoint-2010" : "microsoft-powerpoint",
-      "microsoft-powerpoint-2011" : "microsoft-powerpoint",
-
-      "microsoft-word-2003" : "microsoft-word",
-      "microsoft-word-2007" : "microsoft-word",
-      "microsoft-word-2008" : "microsoft-word",
-      "microsoft-word-2010" : "microsoft-word"
-    };
-
+    var tagMap = null;
     var reverseTagMap = [];
 
     /**
@@ -228,26 +191,46 @@ function main( $ ) {
       } );
     }
 
-    console.log( "Foiling started.");
+    var loaderDelay = 500;
 
-    // Retrieve the users favorite and ignored tags.
-    interestingTags = $( "#interestingTags a" ).map( function( index, tag ) {
-      return this.text;
-    } ).get();
-    ignoredTags = $( "#ignoredTags a" ).map( function( index, tag ) {
-      return this.text;
-    } ).get();
+    /**
+     * Main processing
+     */
+    function weBeFoiling() {
+      if( null === foil[ foilTarget ] ) {
+        if( 10000 > loaderDelay ) {
+          console.log( "FOIL: No foil yet. Retrying in " + loaderDelay + "ms..." );
+          setTimeout( weBeFoiling, loaderDelay );
+        }
+        loaderDelay += 500;
+        return;
+      }
 
-    // Expand the tags on all visible questions.
-    applyFoilToAll();
+      console.log( "FOIL: Foiling started.");
 
-    console.log( "Preparing foil for future guests..." );
+      // Retrieve the users favorite and ignored tags.
+      interestingTags = $( "#interestingTags a" ).map( function( index, tag ) {
+        return this.text;
+      } ).get();
+      ignoredTags = $( "#ignoredTags a" ).map( function( index, tag ) {
+        return this.text;
+      } ).get();
 
-    $( document ).on( "click", ".new-post-activity", function() {
-      setTimeout( applyFoilToAll, 1000 );
-    } );
+      // Expand the tags on all visible questions.
+      applyFoilToAll();
 
-    console.log( "Foiling ended." );
+      console.log( "FOIL: Preparing foil for future guests..." );
+
+      $( document ).on( "click", ".new-post-activity", function() {
+        setTimeout( applyFoilToAll, 1000 );
+      } );
+
+      console.log( "FOIL: Foiling ended." );
+    }
+
+    // Let's go!
+    weBeFoiling();
+
   });
 }
 

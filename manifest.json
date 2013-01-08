@@ -1,13 +1,13 @@
 {
   "name"            :"Foil",
-  "version"         :"0.2.3",
+  "version"         :"0.3",
   "manifest_version":2,
   "description"     :"Does weird stuff on StackExchange sites",
   "content_scripts" :[
     {
       "exclude_globs"  :[],
       "exclude_matches":[],
-      "include_globs"  :["http://superuser.com/*"],
+      "include_globs"  :["http://superuser.com/*","http://stackoverflow.com/*","http://serverfault.com/*"],
       "js"             :["foil.user.js"],
       "matches"        :["http://*/*", "https://*/*"],
       "run_at"         :"document_idle"
