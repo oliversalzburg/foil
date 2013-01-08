@@ -60,11 +60,12 @@ function main( $ ) {
         {
           q:      "select * from json where url=\"https://raw.github.com/oliversalzburg/foil/master/foil/" + foilTarget + ".json\"",
           /*callback: gotJSON, // you don't even need this line if your browser supports CORS*/
-          format: "json"
+          format: "json",
+          jsonCompat: "new"
         },
         function( data ){
           if( data.query.results ) {
-            tagMap = foil[ foilTarget ]= data.query.results.json;
+            tagMap = foil[ foilTarget ] = data.query.results.json;
             console.log( "FOIL: Received foil set '" + foilTarget + "' for current site." );
 
           } else {
