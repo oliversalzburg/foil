@@ -11,7 +11,7 @@
 //
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
 //
-// @version        0.2.1
+// @version        0.2.3
 //
 // ==/UserScript==
 
@@ -190,7 +190,7 @@ function main( $ ) {
       }
 
       $( newTags ).each( function( index, tag ) {
-        var sourceTags = reverseTagMap[ tag ].join( " or " );
+        var sourceTags = reverseTagMap[ tag ].join( " or " ) + " or " + tag;
         var foilTag = $("<a>" ).html( tag ).attr(
           {
             "class" : "post-tag",
