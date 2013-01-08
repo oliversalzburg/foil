@@ -3,7 +3,7 @@ foil
 
 `foil` is an experiment to add an implicit tagging hierarchy to Stack Exchange sites.
 
-![foil on Super User](screenshot.png)
+![foil on Super User](https://github.com/oliversalzburg/foil/raw/master/screenshot.png)
 
 Details
 -------
